@@ -1,17 +1,3 @@
-// Copyright 2023 MERL-DSU
-
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
-
-//        http://www.apache.org/licenses/LICENSE-2.0
-
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-
 `include "Fetch_Cycle.v"
 `include "Decode_Cyle.v"
 `include "Execute_Cycle.v"
@@ -28,13 +14,7 @@
 `include "Data_Memory.v"
 `include "Hazard_unit.v"
 
-
-module Pipeline_top(clk, rst);
-
-    // Declaration of I/O
-    input clk, rst;
-
-    // Declaration of Interim Wires
+module Pipeline_top(input clk, rst);
     wire PCSrcE, RegWriteW, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, BranchE, RegWriteM, MemWriteM, ResultSrcM, ResultSrcW;
     wire [2:0] ALUControlE;
     wire [4:0] RD_E, RD_M, RDW;
@@ -42,10 +22,7 @@ module Pipeline_top(clk, rst);
     wire [31:0] PCPlus4W, ALU_ResultW, ReadDataW;
     wire [4:0] RS1_E, RS2_E;
     wire [1:0] ForwardBE, ForwardAE;
-    
 
-    // Module Initiation
-    // Fetch Stage
     fetch_cycle Fetch (
                         .clk(clk), 
                         .rst(rst), 
@@ -56,7 +33,6 @@ module Pipeline_top(clk, rst);
                         .PCPlus4D(PCPlus4D)
                     );
 
-    // Decode Stage
     decode_cycle Decode (
                         .clk(clk), 
                         .rst(rst), 
@@ -82,7 +58,6 @@ module Pipeline_top(clk, rst);
                         .RS2_E(RS2_E)
                     );
 
-    // Execute Stage
     execute_cycle Execute (
                         .clk(clk), 
                         .rst(rst), 
@@ -111,8 +86,7 @@ module Pipeline_top(clk, rst);
                         .ForwardA_E(ForwardAE),
                         .ForwardB_E(ForwardBE)
                     );
-    
-    // Memory Stage
+
     memory_cycle Memory (
                         .clk(clk), 
                         .rst(rst), 
@@ -131,7 +105,6 @@ module Pipeline_top(clk, rst);
                         .ReadDataW(ReadDataW)
                     );
 
-    // Write Back Stage
     writeback_cycle WriteBack (
                         .clk(clk), 
                         .rst(rst), 
@@ -142,7 +115,6 @@ module Pipeline_top(clk, rst);
                         .ResultW(ResultW)
                     );
 
-    // Hazard Unit
     hazard_unit Forwarding_block (
                         .rst(rst), 
                         .RegWriteM(RegWriteM), 
